@@ -1,6 +1,6 @@
 {
   "name": "inject-webpack",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "Inject code support webpack-4、5 and module-federation",
   "main": "src/index.js",
   "devDependencies": {},
@@ -18,11 +18,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zhangHongEn/universal-module-federation-plugin/tree/main/packages/inject-webpack"
+    "url": "https://github.com/zhangHongEn/inject-webpack"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/zhangHongEn/universal-module-federation-plugin/issues"
+    "url": "https://github.com/zhangHongEn/inject-webpack/issues"
   }
 }

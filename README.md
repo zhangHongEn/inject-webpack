@@ -16,6 +16,13 @@ module.exports = {
         b
     },
     plugins: [
+        new ModuleFederation({
+          filename: "remoteEntry.js",
+          exposes: {
+            "App": "src/App",
+            "Button": "src/Button"
+          },
+        }),
         new Inject(() => {
             return `console.log("inject code1")`
         }, {
