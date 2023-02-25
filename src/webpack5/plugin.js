@@ -8,6 +8,7 @@ const ImportDependency = require("webpack/lib/dependencies/ImportDependency")
 const ContainerEntryModule = require("webpack/lib/container/ContainerEntryModule")
 const {RawSource} = require("webpack-sources")
 const {Template} = require("webpack")
+const matchPath = require("./utils/matchPath")
 const path = require("path");
 const PLUGIN_NAME = 'InjectPlugin';
 
@@ -26,7 +27,8 @@ let injectId = 0
 class InjectPlugin {
   constructor(code, options = {}) {
     options = Object.assign({
-      scopes: ["entry", "remoteEntry"]
+      scopes: ["entry", "remoteEntry"],
+      extraInjection: [],
     }, options)
     this.options = options
     // options = {
@@ -38,6 +40,7 @@ class InjectPlugin {
     this.injectCodeFn = code
     this.injectId = ++injectId
     this.virtualSemverPath = path.join(process.cwd(), `$_injectPlugin_${this.injectId}.js`)
+    this.entryResources = new Set()
   }
   apply(compiler) {
     new VirtualPlugin({
@@ -45,7 +48,6 @@ class InjectPlugin {
     }).apply(compiler)
 
     this.addLoader(compiler)
-    injectMap[this.injectId + "__entryResources"] = new Set()
 
     const scopes = this.options.scopes
     const hasExposes = scopes.indexOf("exposesEntry") > -1
@@ -63,7 +65,7 @@ class InjectPlugin {
             hasEntry,
             hasExposes
           }).forEach(path => {
-            injectMap[this.injectId + "__entryResources"].add(path)
+            this.entryResources.add(path)
           })
         })
       })
@@ -82,8 +84,13 @@ class InjectPlugin {
     * @param {*} compiler 
     */
    addLoader(compiler) {
-    const entryInjectMatch = function (moduleData) {
-      return /\.([cm]js|[jt]sx?|flow)$/i.test(moduleData.resourceResolveData.path)
+    const entryInjectMatch = (moduleData) => {
+      const resourcePath = moduleData.resourceResolveData.path
+      const resourceQuery = moduleData.resourceResolveData.query
+      const isEntry = this.entryResources.has(resourcePath + resourceQuery)
+      const isExtraInjection = matchPath(this.options.extraInjection, resourcePath)
+      return /\.([cm]js|[jt]sx?|flow)$/i.test(resourcePath) && 
+        (isExtraInjection || isEntry)
     };
     compiler.hooks.compilation.tap(
       PLUGIN_NAME,

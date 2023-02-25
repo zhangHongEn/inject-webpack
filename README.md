@@ -30,7 +30,9 @@ module.exports = {
             // remoteEntry: remoteEntry.js
             // exposesEntry: src/App、src/Button
             // default value is ["entry", "remoteEntry"]
-            scopes: ["entry", "remoteEntry", "exposesEntry"]
+            scopes: ["entry", "remoteEntry", "exposesEntry"],
+            // In addition to the entry files corresponding to scopes, code is also injected into these files
+            extraInjection: [/src\/a\//]
         }),
     ]
 }
