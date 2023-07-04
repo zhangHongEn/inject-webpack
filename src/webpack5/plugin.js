@@ -22,7 +22,7 @@ ContainerEntryModule.prototype.build = function (options, compilation, resolver,
   })
 }
 
-let injectId = 0
+global.__injectWebpack__injectId = 20
 
 class InjectPlugin {
   constructor(code, options = {}) {
@@ -38,7 +38,7 @@ class InjectPlugin {
     //   // scopes: ["entry", "remoteEntry", "exposesEntry"]
     // }
     this.injectCodeFn = code
-    this.injectId = ++injectId
+    this.injectId = ++global.__injectWebpack__injectId
     this.virtualSemverPath = path.join(process.cwd(), `$_injectPlugin_${this.injectId}.js`)
     this.entryResources = new Set()
   }
